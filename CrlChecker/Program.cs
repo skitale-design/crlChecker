@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Net;
 using System.Data.SQLite;
+using System.Reflection;
 
 namespace CrlChecker
 {
@@ -14,24 +15,32 @@ namespace CrlChecker
     {
         static void Main(string[] args)
         {
-            string xmlFolderPath = @"C:\Users\avilin\Documents\S\tmp";
-            string crlFolderPath = @"C:\Users\avilin\Documents\S\tmp\crl";
+
+            //string projectFolderPath = Path.GetFullPath(@"..\..\..\tmp");
+            string xmlFolderPath = Path.GetFullPath(@"..\..\..\tmp");
+            string crlFolderPath = Path.GetFullPath(@"..\..\..\tmp\crl");
             int numberOfCrlToByDownloaded = 10;
             string mask = "*.crl";
-            string dbPath = @"C:\Users\avilin\Documents\S\tmp\test.db";
-            string logFilePath = @"C:\Users\avilin\Documents\S\tmp\log.txt";
+            string dbPath = Path.GetFullPath(@"..\..\..\tmp\CrlCheckTestDb.db");
+            string logFilePath = Path.GetFullPath(@"..\..\..\tmp\log.txt");
+
+            //Db dbtest = new Db(dbPath);
+
+            //string query = "";
+
+            //dbtest.CreateTable(query);
 
             Logger.SetPath(logFilePath);
 
             Logger.Write("Start ---------------------------------------------");
 
-            //Xml xml = new Xml();
+            Xml xml = new Xml();
 
-            //XmlNodeList crlUrlList = xml.GetXmlFromUrlandSaveAs("http://e-trust.gosuslugi.ru/CA/DownloadTSL?schemaVersion=0", xmlFolderPath);
+            XmlNodeList crlUrlList = xml.GetXmlFromUrlandSaveAs("http://e-trust.gosuslugi.ru/CA/DownloadTSL?schemaVersion=0", xmlFolderPath);
 
             Crl crl = new Crl();
 
-            //crl.GetNumberOfCrlFromUrlAndSaveToFolder(numberOfCrlToByDownloaded, crlUrlList, crlFolderPath);
+            crl.GetNumberOfCrlFromUrlAndSaveToFolder(numberOfCrlToByDownloaded, crlUrlList, crlFolderPath);
 
             string[] filePaths = Directory.GetFiles(crlFolderPath, mask);
 

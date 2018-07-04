@@ -1,0 +1,9 @@
+
+Как посмотреть директорию из которой запускается отладчик (требуется System.Reflection):
+Console.WriteLine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+
+Перемещение на три папки вверх и вход в папку tmp:
+Console.WriteLine(File.GetAttributes(@"..\..\..\tmp").ToString());
+
+Перемещение на три папки вверх и посмотреть количество файлов в папке tmp:
+Console.WriteLine(Directory.GetFiles(@"..\..\..\tmp\").Length);

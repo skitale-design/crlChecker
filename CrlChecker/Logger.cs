@@ -10,7 +10,7 @@ namespace CrlChecker
     public class Logger
     {
         static private string logPath;
-
+           
         //Комментарий для проверки работы коммита
         //коммит из дома
 

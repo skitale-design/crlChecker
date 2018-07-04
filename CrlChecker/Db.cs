@@ -29,6 +29,7 @@ namespace CrlChecker
 
             string q = $"INSERT INTO testTable(UC, thisUpdate, nextUpdate) VALUES ('{array[2]}', '{array[1]}')";
 
+
             SQLiteCommand query = new SQLiteCommand(q,connection);
 
             query.ExecuteNonQuery();
@@ -43,7 +44,7 @@ namespace CrlChecker
 
             connection.Open();
 
-            string q = $"INSERT INTO testTable(UC, signature, thisUpdate, nextUpdate, crlNumber, linkToCrl) VALUES ('{crl.issuer}',NULL, '{crl.thisTime}', '{crl.updateTime}', 'number', '{crlPath}' )";
+            string q = $"INSERT INTO test(UC, signature, thisUpdate, nextUpdate, crlNumber, linkToCrl) VALUES ('{crl.issuer}',NULL, '{crl.thisTime}', '{crl.updateTime}', 'number', '{crlPath}' )";
 
             SQLiteCommand query = new SQLiteCommand(q, connection);
 
@@ -53,6 +54,26 @@ namespace CrlChecker
             {
                 Logger.Write($"Запись в БД прошла успешно.");
             }
+
+            connection.Close();
+        }
+
+        public void CreateTable(string query)
+        {
+            string q = "CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT,UC STRING,signature BLOB,thisUpdate STRING,nextUpdate STRING,crlNumber INTEGER, linkToCrl STRING);";
+
+            if (query == "")
+            {
+                query = q;
+            }
+
+            SQLiteConnection connection = new SQLiteConnection(connectionString);
+
+            connection.Open();
+
+            SQLiteCommand command = new SQLiteCommand(query, connection);
+
+            command.ExecuteNonQuery();
 
             connection.Close();
         }
