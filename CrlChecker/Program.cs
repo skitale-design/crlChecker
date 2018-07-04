@@ -16,7 +16,7 @@ namespace CrlChecker
         static void Main(string[] args)
         {
 
-            //string projectFolderPath = Path.GetFullPath(@"..\..\..\tmp");
+            string projectFolderPath = Path.GetFullPath(@"..\..\..\tmp");
             string xmlFolderPath = Path.GetFullPath(@"..\..\..\tmp");
             string crlFolderPath = Path.GetFullPath(@"..\..\..\tmp\crl");
             int numberOfCrlToByDownloaded = 10;
@@ -52,13 +52,21 @@ namespace CrlChecker
 
                 string crlPath = filePath;
 
-                Crl.CrlInfo crlInfo = crl.GetCrlInfoAsStructure(crlPath);
+                if (!(new FileInfo(filePath).Length == 0))
+                {
+                    Crl.CrlInfo crlInfo = crl.GetCrlInfoAsStructure(crlPath);
 
-                Db db = new Db(dbPath);
+                    Db db = new Db(dbPath);
 
-                db.WriteCrlToDbFromStructure(crlInfo, crlPath);
-
+                    db.WriteCrlToDbFromStructure(crlInfo, crlPath);
             }
+                else
+                {
+                Console.WriteLine($"Файл {filePath} пуст!");
+
+                continue;
+            }
+        }
 
             Console.WriteLine("Для завершения нажмите любую клавишу...");
             Console.ReadKey();
