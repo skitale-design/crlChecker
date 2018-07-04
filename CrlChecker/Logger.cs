@@ -12,6 +12,7 @@ namespace CrlChecker
         static private string logPath;
 
         //Комментарий для проверки работы коммита
+        //коммит из дома
 
         static public void Write(string text)
         {
