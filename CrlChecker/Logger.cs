@@ -11,6 +11,8 @@ namespace CrlChecker
     {
         static private string logPath;
 
+        //Комментарий для проверки работы коммита
+
         static public void Write(string text)
         {
             using (StreamWriter sw = new StreamWriter(logPath, append: true))
