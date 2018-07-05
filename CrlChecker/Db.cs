@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,12 @@ namespace CrlChecker
         {
             this.dbPath = dbPath;
             this.connectionString = $"Data Source={dbPath};";
+        }
+
+        public void CreateDb()
+        {
+            SQLiteConnection.CreateFile(dbPath);
+            Console.WriteLine(File.Exists(dbPath) ? $"База данных по пути {dbPath} успешно создана!" : "Возникли ошибки при создании :(");
         }
 
         //TODO try-catch в методах
@@ -60,22 +67,32 @@ namespace CrlChecker
 
         public void CreateTable(string query)
         {
-            string q = "CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT,UC STRING,signature BLOB,thisUpdate STRING,nextUpdate STRING,crlNumber INTEGER, linkToCrl STRING);";
-
-            if (query == "")
+            try
             {
-                query = q;
+
+                string q = "CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT,UC STRING,signature BLOB,thisUpdate STRING,nextUpdate STRING,crlNumber INTEGER, linkToCrl STRING);";
+
+                if (query == "default")
+                {
+                    query = q;
+                }
+
+                SQLiteConnection connection = new SQLiteConnection(connectionString);
+
+                connection.Open();
+
+                SQLiteCommand command = new SQLiteCommand(query, connection);
+
+                command.ExecuteNonQuery();
+
+                connection.Close();
+
+                Logger.Write($"Таблица в базе данных {dbPath} создана. Выполнен запрос: {q}");
             }
-
-            SQLiteConnection connection = new SQLiteConnection(connectionString);
-
-            connection.Open();
-
-            SQLiteCommand command = new SQLiteCommand(query, connection);
-
-            command.ExecuteNonQuery();
-
-            connection.Close();
+            catch (Exception e)
+            {
+                Logger.Write($"Таблица уже существует (текст ошибки: {e.Message})");
+            }
         }
 
         //Послать любой запрос в БД

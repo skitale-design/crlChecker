@@ -24,13 +24,13 @@ namespace CrlChecker
             string dbPath = Path.GetFullPath(@"..\..\..\tmp\CrlCheckTestDb.db");
             string logFilePath = Path.GetFullPath(@"..\..\..\tmp\log.txt");
 
-            //Db dbtest = new Db(dbPath);
-
-            //string query = "";
-
-            //dbtest.CreateTable(query);
-
             Logger.SetPath(logFilePath);
+
+            Db db = new Db(dbPath);
+
+            string query = "default";
+
+            db.CreateTable(query);
 
             Logger.Write("Start ---------------------------------------------");
 
@@ -55,8 +55,6 @@ namespace CrlChecker
                 if (!(new FileInfo(filePath).Length == 0))
                 {
                     Crl.CrlInfo crlInfo = crl.GetCrlInfoAsStructure(crlPath);
-
-                    Db db = new Db(dbPath);
 
                     db.WriteCrlToDbFromStructure(crlInfo, crlPath);
             }

@@ -16,6 +16,8 @@ namespace CrlChecker
 
         static public void Write(string text)
         {
+            Console.WriteLine(text);
+
             using (StreamWriter sw = new StreamWriter(logPath, append: true))
             {
                 sw.WriteLine(String.Format($"{DateTime.Now.ToString()} : {text}"));
