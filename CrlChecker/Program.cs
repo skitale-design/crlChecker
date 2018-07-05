@@ -15,13 +15,18 @@ namespace CrlChecker
     {
         static void Main(string[] args)
         {
-
             string projectFolderPath = Path.GetFullPath(@"..\..\..\tmp");
+
             string xmlFolderPath = Path.GetFullPath(@"..\..\..\tmp");
+
             string crlFolderPath = Path.GetFullPath(@"..\..\..\tmp\crl");
+
             int numberOfCrlToByDownloaded = 10;
+
             string mask = "*.crl";
+
             string dbPath = Path.GetFullPath(@"..\..\..\tmp\CrlCheckTestDb.db");
+
             string logFilePath = Path.GetFullPath(@"..\..\..\tmp\log.txt");
 
             Logger.SetPath(logFilePath);
@@ -67,6 +72,7 @@ namespace CrlChecker
         }
 
             Console.WriteLine("Для завершения нажмите любую клавишу...");
+
             Console.ReadKey();
         }
     }

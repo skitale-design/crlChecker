@@ -24,11 +24,13 @@ namespace CrlChecker
             try
             {
                 SQLiteConnection.CreateFile(dbPath);
+
                 Console.WriteLine(File.Exists(dbPath) ? $"База данных по пути {dbPath} успешно создана!" : "Возникли ошибки при создании :(");
             }
             catch (Exception e)
             {
                 Logger.Write(e.Message);
+
                 throw;
             }
         }

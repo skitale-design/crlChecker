@@ -11,8 +11,6 @@ using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Asn1.X509;
 using System.Security.Cryptography.X509Certificates;
 
-
-
 namespace CrlChecker
 {
     class Crl
@@ -22,14 +20,19 @@ namespace CrlChecker
         public struct CrlInfo
         {
             public string issuer;
+
             public byte[] signature;
+
             public DateTime thisTime, updateTime;
 
             public CrlInfo(string _issuer, byte[] _signature, DateTime _thisTime, DateTime _updateTime)
             {
                 this.issuer = _issuer;
+
                 this.signature = _signature;
+
                 this.thisTime = _thisTime;
+
                 this.updateTime = _updateTime;
             }
         }
@@ -53,10 +56,13 @@ namespace CrlChecker
                 try
                 {
                     string crlSavePath = $"{saveToFolder}\\crl{i}.crl";
-                    Console.Write($"Скачивание CRL №{i}/{len}..........");
+
+                    //Console.Write($"Скачивание CRL №{i}/{len}..........");
                     Logger.Write($"Скачивание CRL №{i}/{len}..........");
+
                     webcli.DownloadFile(crlUrl, crlSavePath);
-                    Console.WriteLine($"ОК");
+                    
+                    //Console.WriteLine($"ОК");
                     Logger.Write($"ОК");
 
                     Logger.Write($"Скачивание CRL №{ i}/{len}.......... CRL с адреса {node.InnerText} скачан успешно.");
@@ -65,14 +71,15 @@ namespace CrlChecker
                 }
                 catch (WebException e)
                 {
-                    Console.WriteLine(e.Message);
+                    //Console.WriteLine(e.Message);
 
-                    //Console.WriteLine(e.Status);
+                    ////Console.WriteLine(e.Status);
 
                     if (e.Status.ToString() == "ConnectionFailure")
                     {
-                        Console.WriteLine(e.Status);
+                        //Console.WriteLine(e.Status);
                         Logger.Write($"URL {node} не отвечает - скачивание не удалось. Ошибка: {e.Message}");
+
                         continue;
                     }
 
@@ -88,23 +95,32 @@ namespace CrlChecker
             try
             {
                 byte[] buf = ReadFile(fileName);
+
                 X509CrlParser clrParser = new X509CrlParser();
+
                 X509Crl crl = clrParser.ReadCrl(buf);
 
                 var issuer = crl.IssuerDN;
+
                 var signature = crl.GetSignature();
+
                 DateTime nextupdate = crl.NextUpdate.Value;
+
                 DateTime thisUpdate = crl.ThisUpdate;
 
-                Console.WriteLine("Issuerdata.tostring = {0}", issuer.ToString());
-                Console.WriteLine("Signature.ToString = {0}", signature.ToString());
-                Console.WriteLine("NextUpdate = {0}", nextupdate.ToString());
-                Console.WriteLine("ThisUpdate = {0}", thisUpdate);
+                //Console.WriteLine("Issuerdata.tostring = {0}", issuer.ToString());
+                //Console.WriteLine("Signature.ToString = {0}", signature.ToString());
+                //Console.WriteLine("NextUpdate = {0}", nextupdate.ToString());
+                //Console.WriteLine("ThisUpdate = {0}", thisUpdate);
 
                 Logger.Write($"Извлечение данных из crl-файла: {fileName}");
+
                 Logger.Write($"issuer: {issuer}");
+
                 Logger.Write($"signature: {signature}");
+
                 Logger.Write($"nextupdate: {nextupdate}");
+
                 Logger.Write($"thisupdate: {thisUpdate}");
 
                 CrlInfo CrlInfo1 = new CrlInfo(issuer.ToString(),signature,nextupdate,thisUpdate);
@@ -118,7 +134,7 @@ namespace CrlChecker
             catch (Exception ex)
             {
                 string[] array = { "Операция не удалась" };
-                Console.WriteLine(ex.Message);
+                Logger.Write(ex.Message);
                 return array;
             }
         }
@@ -137,15 +153,19 @@ namespace CrlChecker
                 DateTime nextupdate = crl.NextUpdate.Value;
                 DateTime thisUpdate = crl.ThisUpdate;
 
-                Console.WriteLine("Issuerdata.tostring = {0}", issuer.ToString());
-                Console.WriteLine("Signature.ToString = {0}", signature.ToString());
-                Console.WriteLine("NextUpdate = {0}", nextupdate.ToString());
-                Console.WriteLine("ThisUpdate = {0}", thisUpdate);
+                //Console.WriteLine("Issuerdata.tostring = {0}", issuer.ToString());
+                //Console.WriteLine("Signature.ToString = {0}", signature.ToString());
+                //Console.WriteLine("NextUpdate = {0}", nextupdate.ToString());
+                //Console.WriteLine("ThisUpdate = {0}", thisUpdate);
 
                 Logger.Write($"Извлечение данных из crl-файла: {fileName}");
+
                 Logger.Write($"issuer: {issuer}");
+
                 Logger.Write($"signature: {signature}");
+
                 Logger.Write($"nextupdate: {nextupdate}");
+
                 Logger.Write($"thisupdate: {thisUpdate}");
 
                 CrlInfo CrlInfo = new CrlInfo(issuer.ToString(), signature, nextupdate, thisUpdate);
@@ -155,7 +175,9 @@ namespace CrlChecker
             catch (Exception ex)
             {
                 Crlinfo = new CrlInfo();
-                Console.WriteLine(ex.Message);
+
+                Logger.Write(ex.Message);
+
                 return Crlinfo;
             }
         }
@@ -163,23 +185,49 @@ namespace CrlChecker
         //Reads a file.
         internal static byte[] ReadFile(string fileName)
         {
-            FileStream f = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-            int size = (int)f.Length;
-            byte[] data = new byte[size];
-            size = f.Read(data, 0, size);
-            f.Close();
-            return data;
+            try
+            {
+                FileStream f = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+
+                int size = (int)f.Length;
+
+                byte[] data = new byte[size];
+
+                size = f.Read(data, 0, size);
+
+                f.Close();
+
+                return data;
+            }
+            catch (Exception e)
+            {
+                Logger.Write(e.Message);
+
+                throw;
+            }
         }
 
         
         public static void generateCrl(string crlPath, string testCrlPath)
         {
-            byte[] certbyte = File.ReadAllBytes(crlPath);
-            Console.WriteLine("First byte: {0}", certbyte[0]);
-            string pem = "-----BEGIN X509 CRL-----\r\n" + Convert.ToBase64String(certbyte, Base64FormattingOptions.InsertLineBreaks) + "-----END X509 CRL-----";
-            using (StreamWriter outputFile = new StreamWriter($"{testCrlPath}\\test.crl"))
+            try
             {
-                outputFile.Write(pem);
+                byte[] certbyte = File.ReadAllBytes(crlPath);
+
+                Console.WriteLine("First byte: {0}", certbyte[0]);
+
+                string pem = "-----BEGIN X509 CRL-----\r\n" + Convert.ToBase64String(certbyte, Base64FormattingOptions.InsertLineBreaks) + "-----END X509 CRL-----";
+
+                using (StreamWriter outputFile = new StreamWriter($"{testCrlPath}\\test.crl"))
+                {
+                    outputFile.Write(pem);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Write(e.Message);
+
+                throw;
             }
         }
     }
