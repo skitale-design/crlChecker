@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Checker.cs" />
     <Compile Include="Crl.cs" />
     <Compile Include="Db.cs" />
     <Compile Include="Logger.cs" />

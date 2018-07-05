@@ -16,7 +16,6 @@ namespace CrlChecker
         static void Main(string[] args)
         {
 
-            string projectFolderPath = Path.GetFullPath(@"..\..\..\tmp");
             string xmlFolderPath = Path.GetFullPath(@"..\..\..\tmp");
             string crlFolderPath = Path.GetFullPath(@"..\..\..\tmp\crl");
             int numberOfCrlToByDownloaded = 10;
