@@ -21,48 +21,69 @@ namespace CrlChecker
 
         public void CreateDb()
         {
-            SQLiteConnection.CreateFile(dbPath);
-            Console.WriteLine(File.Exists(dbPath) ? $"База данных по пути {dbPath} успешно создана!" : "Возникли ошибки при создании :(");
+            try
+            {
+                SQLiteConnection.CreateFile(dbPath);
+                Console.WriteLine(File.Exists(dbPath) ? $"База данных по пути {dbPath} успешно создана!" : "Возникли ошибки при создании :(");
+            }
+            catch (Exception e)
+            {
+                Logger.Write(e.Message);
+                throw;
+            }
         }
-
-        //TODO try-catch в методах
 
         //Писать в БД данные, которые получаем в виде массива строк:
         internal void WriteCrlToDbFromArray(string[] array)
         {
-            SQLiteConnection connection = new SQLiteConnection(connectionString);
+            try
+            {
+                SQLiteConnection connection = new SQLiteConnection(connectionString);
 
-            connection.Open();
+                connection.Open();
 
-            string q = $"INSERT INTO testTable(UC, thisUpdate, nextUpdate) VALUES ('{array[2]}', '{array[1]}')";
+                string q = $"INSERT INTO test(UC, thisUpdate, nextUpdate) VALUES ('{array[2]}', '{array[1]}')";
 
+                SQLiteCommand query = new SQLiteCommand(q, connection);
 
-            SQLiteCommand query = new SQLiteCommand(q,connection);
+                query.ExecuteNonQuery();
 
-            query.ExecuteNonQuery();
-
-            connection.Close();
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Logger.Write(e.Message);
+                throw;
+            }
         }
 
         //Писать в БД данные, которые получаем в виде стрктуры данных CrlInfo:
         internal void WriteCrlToDbFromStructure(Crl.CrlInfo crl, string crlPath)
         {
-            SQLiteConnection connection = new SQLiteConnection(connectionString);
-
-            connection.Open();
-
-            string q = $"INSERT INTO test(UC, signature, thisUpdate, nextUpdate, crlNumber, linkToCrl) VALUES ('{crl.issuer}',NULL, '{crl.thisTime}', '{crl.updateTime}', 'number', '{crlPath}' )";
-
-            SQLiteCommand query = new SQLiteCommand(q, connection);
-
-            int rezult = query.ExecuteNonQuery();
-
-            if (rezult == 1)
+            try
             {
-                Logger.Write($"Запись в БД прошла успешно.");
-            }
+                SQLiteConnection connection = new SQLiteConnection(connectionString);
 
-            connection.Close();
+                connection.Open();
+
+                string q = $"INSERT INTO test(UC, signature, thisUpdate, nextUpdate, crlNumber, linkToCrl) VALUES ('{crl.issuer}',NULL, '{crl.thisTime}', '{crl.updateTime}', 'number', '{crlPath}' )";
+
+                SQLiteCommand query = new SQLiteCommand(q, connection);
+
+                int rezult = query.ExecuteNonQuery();
+
+                if (rezult == 1)
+                {
+                    Logger.Write($"Запись в БД прошла успешно.");
+                }
+
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Logger.Write(e.Message);
+                throw;
+            }
         }
 
         public void CreateTable(string query)
@@ -98,15 +119,23 @@ namespace CrlChecker
         //Послать любой запрос в БД
         internal void SendQueryToDb(string query)
         {
-            SQLiteConnection connection = new SQLiteConnection(connectionString);
+            try
+            {
+                SQLiteConnection connection = new SQLiteConnection(connectionString);
 
-            connection.Open();
+                connection.Open();
 
-            SQLiteCommand Query = new SQLiteCommand(query ,connection);
+                SQLiteCommand Query = new SQLiteCommand(query, connection);
 
-            Query.ExecuteNonQuery();
+                Query.ExecuteNonQuery();
 
-            connection.Close();
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Logger.Write(e.Message);
+                throw;
+            }
         }
     }
 }
